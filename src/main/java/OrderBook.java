@@ -22,13 +22,23 @@ public class OrderBook {
         }
     }
 
-     //problem in modeify method
-    public void modifyOrder(long id, Order order) {
+
+    public void modifyOrder(long id, Order order) throws OrderModifyExceptions {
         if (order.isBid() == true) {
             Iterator<Order> it = bids.iterator();
-            while (it.hasNext()) {;
-                Order currentOrder =it.next();
+            while (it.hasNext()) {
+                ;
+                Order currentOrder = it.next();
                 if (currentOrder.getId() == id) {
+                    if (currentOrder.isBid() != order.isBid()) {
+                        throw new OrderModifyExceptions(" cannot update de to proposition changes ");
+                    } else if (currentOrder.getPrice() != order.getPrice()) {
+                        throw new OrderModifyExceptions("cannot update due to price changes");
+                    } else if (currentOrder.getVenue() != order.getVenue()) {
+                        throw new OrderModifyExceptions("cannot update due to venue changes");
+                    } else if (currentOrder.getType() != order.getType()) {
+                        throw new OrderModifyExceptions("cannot update due to order type changes");
+                    }
                     currentOrder.setQuantity(order.getQuantity());
                     break;
                 }
@@ -36,7 +46,7 @@ public class OrderBook {
         } else {
             Iterator<Order> it = asks.iterator();
             while (it.hasNext()) {
-                Order currentOrder =it.next();
+                Order currentOrder = it.next();
                 if (currentOrder.getId() == id) {
                     currentOrder.setQuantity(order.getQuantity());
                     break;
@@ -45,10 +55,12 @@ public class OrderBook {
         }
 
         //remove method works good
-    } public void deleteOrder ( long id, Order order){
+    }
+
+    public void deleteOrder(long id, Order order) {
         if (order.isBid() == true) {
             Iterator<Order> it = bids.iterator();
-            while(it.hasNext()) {
+            while (it.hasNext()) {
                 Order orderCurrent = it.next();
                 if (orderCurrent.getId() == id) {
                     bids.remove(orderCurrent);
@@ -58,7 +70,7 @@ public class OrderBook {
 
         } else {
             Iterator<Order> it = asks.iterator();
-            while(it.hasNext()) {
+            while (it.hasNext()) {
                 Order orderCurrent = it.next();
                 if (orderCurrent.getId() == id) {
                     asks.remove(orderCurrent);
@@ -69,19 +81,17 @@ public class OrderBook {
     }
 
 
-    public Order getBestBid () {
-      return bids.peek();
+    public Order getBestBid() {
+        return bids.peek();
     }
 
 
-
-    public Order getBestAsk () {
-      return asks.peek();
+    public Order getBestAsk() {
+        return asks.peek();
     }
 
 
-
-    public void processOrder (Order order){
+    public void processOrder(Order order) {
         if (order.getType() == OrderType.LIMIT) {
             if (order.isBid()) {
                 if (order.getPrice() <= getBestAsk().getPrice()) {
@@ -114,12 +124,13 @@ public class OrderBook {
     }
 
 
-
-        public void printBidsList() {
+    public void printBidsList() {
         Iterator<Order> it = bids.iterator();
         while (it.hasNext()) {
             System.out.println(it.next().toString());
         }
+
+        System.out.println("no next");
 
     }
 
@@ -129,8 +140,9 @@ public class OrderBook {
             System.out.println(it.next().toString());
         }
     }
-    public void realOrder(){
-        while(!bids.isEmpty()){
+
+    public void realOrder() {
+        while (!bids.isEmpty()) {
             System.out.println(bids.poll());
         }
     }
